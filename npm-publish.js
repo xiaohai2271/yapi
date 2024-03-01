@@ -14,8 +14,8 @@ shell.exec ('npm run changelog');
 shell.exec ('git add .');
 shell.exec ('git commit -a -m "chore: update static file"');
 
-console.log ('exec: git pull origin master');
-shell.exec ('git pull origin master');
+console.log ('exec: git pull origin main');
+shell.exec ('git pull origin main');
 let a = shell.exec (`git tag |grep ${version} |wc -l`);
 if (a && parseInt (a) > 0) {
   shell.exec ('git tag -d ' + version);
@@ -26,5 +26,5 @@ shell.exec ('git push origin ' + version);
 
 console.log('git push success', version)
 
-console.log('正在执行npm发布')
-shell.exec('npm publish')
+// console.log('正在执行npm发布')
+// shell.exec('npm publish')

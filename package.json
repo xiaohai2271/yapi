@@ -1,6 +1,6 @@
 {
   "name": "yapi-vendor",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "description": "YAPI",
   "main": "server/app.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "start": " node server/app.js",
     "test": "ava",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "build-client": "NODE_ENV=production ykit pack -m",
+    "build-client": "set NODE_ENV=production ykit pack -m",
     "npm-publish": "node ./npm-publish.js",
     "docs": "ydoc build"
   },
