@@ -1,0 +1,69 @@
+{
+   "port": "3000",
+   "adminAccount": "wupang@admin.com",
+   "adminPassword":"wupang",
+   "timeout": 120000,
+   "closeRegister":true,
+   "db": {
+      "servername": "127.0.0.1",
+      "DATABASE": "yapi",
+      "port": 27017
+   },
+   "mail": {
+      "enable": false,
+      "host": "smtp.163.com",
+      "port": 465,
+      "from": "***@163.com",
+      "auth": {
+         "user": "***@163.com",
+         "pass": "*****"
+      }
+   },
+   "plugins": [
+      {
+         "name": "notifier",
+         "options": {
+            "host": "http://localhost:3000"
+         }
+      },
+      {
+         "name": "interface-oauth2-token"
+      },
+      {
+         "name": "add-user"
+      },
+      {
+         "name": "pl-auto-test",
+         "options": {
+            "host": "http://localhost:3000"
+         }
+      },
+      {
+         "name": "api-watch"
+      },
+      {
+         "name": "import-swagger-customize"
+      },
+      {
+         "name": "webhook",
+         "options": {
+            "monitor1": {
+               "yapiAdress": "127.0.0.1",
+               "yapiPort": "3000",
+               "url": "http://127.0.0.1:3000/api/v1",
+               "method": "post",
+               "status": true,
+               "events": [
+                  "interface_add",
+                  "interface_del",
+                  "interface_update"
+               ],
+               "desc": "监听器1"
+            }
+         }
+      },
+      {
+         "name": "export-schema"
+      }
+   ]
+}
