@@ -23,6 +23,8 @@ module.exports = {
     name: 'swagger-auto-sync'
   }, {
     name: 'export-postman'
+  }, {
+    name: 'export-markdown-template'
   }
   // {
   //   name: 'test'
