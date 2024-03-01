@@ -1078,8 +1078,10 @@ class InterfaceEditForm extends Component {
                   label='状态'>
               {getFieldDecorator('status', { initialValue: this.state.status })(
                 <Select>
+                  <Option value='designing'>设计中</Option>
+                  <Option value='coding'>开发中</Option>
                   <Option value='done'>已完成</Option>
-                  <Option value='undone'>未完成</Option>
+                  {/*<Option value='undone'>未完成</Option>*/}
                 </Select>,
                 )}
             </FormItem>

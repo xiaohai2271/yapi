@@ -378,7 +378,8 @@ class View extends Component {
       }
     ]
     let status = {
-      undone: '未完成',
+      designing: '设计中',
+      coding: '开发中',
       done: '已完成'
     }
 

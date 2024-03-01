@@ -27,7 +27,7 @@ html {
 /* 外层轨道 */
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset006pxrgba(255,0,0,0.3);
-  // background-color: 
+  // background-color:
   background: rgba(255, 255, 255, 0.1);
 }
 /* 滚动条滑块 */
@@ -157,6 +157,12 @@ em {
   }
   &.undone::before {
     background-color: #ff561b;
+  }
+  &.designing::before {
+    background-color: #d3adf7;
+  }
+  &.coding::before {
+    background-color: #4096ff;
   }
 }
 
