@@ -66,7 +66,7 @@ class exportPostmanController extends baseController {
         return data;
     }
 
-     dealMenuOrInterface(item) {
+     dealMenuOrInterface(item, basePath) {
         // console.log(item)
          return {
              name: item.name,
@@ -83,10 +83,10 @@ class exportPostmanController extends baseController {
                              }
                          }),
                          url:{
-                             raw: `{{BaseHost}}/${it.path}`.replace(/\/+/g,"/"),
+                             raw: `{{BaseHost}}/${basePath}/${it.path}`.replace(/\/+/g,"/"),
                              host: ["{{BaseHost}}"],
                              // port:"",
-                             path: it.path.split("/").filter(it => it.length > 0)
+                             path: (basePath + "/" + it.path).split("/").filter(it => it.length > 0)
                          },
                          response:[]
                      }
@@ -139,7 +139,8 @@ class exportPostmanController extends baseController {
 
             let data = this.handleExistId(list);
 
-            // console.log("curProject", curProject)
+            console.log("curProject", curProject)
+            // console.log("list", list)
 
             let model = await convertToPostmanModel(data);
             tp = JSON.stringify(model, null, 2);
@@ -152,7 +153,7 @@ class exportPostmanController extends baseController {
         }
         //Convert to SwaggerV2.0 (OpenAPI 2.0)
         async function convertToPostmanModel(list) {
-
+            const basePath = curProject.basepath
             const postmanObj = {
                 info:{
                     _postman_id: uid.v4(),
@@ -160,7 +161,7 @@ class exportPostmanController extends baseController {
                     schema:"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
                 },
                 item:(() => {
-                    return list.map(it => that.dealMenuOrInterface(it))
+                    return list.map(it => that.dealMenuOrInterface(it, basePath))
                 })(),
                 paths: (() => {
                     let apisObj = {};
