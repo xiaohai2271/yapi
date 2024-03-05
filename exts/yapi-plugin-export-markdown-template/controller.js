@@ -106,7 +106,7 @@ class exportMarkdownController extends baseController {
             // const tmpPath = fs.mkdtempSync(path.join(os.tmpdir(),uuid.v4()));
             // console.log("tmpPath=", tmpPath)
             const zip = JSZip();
-
+            let errMsg = [];
             for (let item of data) {
                 for(let interfaceItem of item.list){
                     const safeVm = new Safeify({
@@ -115,7 +115,7 @@ class exportMarkdownController extends baseController {
                         unrestricted: true,
                         quantity: 4,          //沙箱进程数量，默认同 CPU 核数
                         memoryQuota: 500,     //沙箱最大能使用的内存（单位 m），默认 500m
-                        cpuQuota: 0.5,        //沙箱的 cpu 资源配额（百分比），默认 50%
+                        cpuQuota: 0.5        //沙箱的 cpu 资源配额（百分比），默认 50%
                     });
                     // console.log("curProject", curProject)
                     const vmContext = {
@@ -127,13 +127,20 @@ class exportMarkdownController extends baseController {
                         safeVm.preset("const project = JSON.parse(projectTmp);const interface = JSON.parse(interfaceTmp);const category=JSON.parse(categoryTmp)")
                         model = await safeVm.run(result.template_data, vmContext);
                         // fs.writeFileSync(`${tmpPath}/${interfaceItem.title}.md`, model.toString())
-                        zip.file(`${interfaceItem.title}.md`, model.toString())
+                        zip.file(`${item.name}/${interfaceItem.title}.md`, model.toString())
                         safeVm.destroy();
                     } catch (e) {
-                        console.log(e)
-                        return ;
+
+                        errMsg.push({
+                            error: e.toString(),
+                            context: vmContext
+                        });
                     }
                 }
+            }
+            if (errMsg.length){
+                ctx.body = yapi.commons.resReturn(errMsg, 502, '下载出错');
+                return ;
             }
 
             ctx.set('Content-Disposition', `attachment; filename=${encodeURIComponent(curProject.name)}.zip`);
