@@ -12,7 +12,7 @@ module.exports = {
   },{
     name: 'export-data'
   },{
-    name: 'gen-services'
+    name: 'gen-java-services'
   },{
     name: 'export-swagger2-data'
   },{
