@@ -69,10 +69,10 @@ class MDTemplateServices extends Component {
     const extraContent = (
       <Fragment>
         <Button size={"small"} type={"link"} icon="copy"
-                onClick={(e) => this.preCopy(this.state.render_data.data)}>拷贝原文</Button>
+                onClick={() => this.preCopy(this.state.render_data.data)}>拷贝原文</Button>
 
         <Button size={"small"} type={"link"} icon="table"
-                onClick={(e) => {
+                onClick={() => {
                   this.setState({
                     isHtml: !this.state.isHtml
                   })

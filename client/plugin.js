@@ -82,7 +82,7 @@ hooks = {
   },
   /**
    * 在运行页面或单个测试也里每次发送完成后调用
-   * 返回值为响应原始值 + 
+   * 返回值为响应原始值 +
    * {
    *   type: 'inter' | 'case',
    *   projectId: string,
@@ -104,7 +104,7 @@ hooks = {
   },
   /**
    * 在测试集里运行每次发送请求后调用
-   * 返回值为响应原始值 + 
+   * 返回值为响应原始值 +
    * {
    *   type: 'col',
    *   caseId: string,
@@ -204,9 +204,9 @@ hooks = {
   /*
    * 添加 reducer
    * @param Object reducerModules
-   * 
+   *
    * @info
-   * importDataModule = {}; 
+   * importDataModule = {};
    */
 
   add_reducer: {
@@ -218,7 +218,7 @@ hooks = {
   /*
    * 添加 subnav 钩子
    * @param Object reducerModules
-   * 
+   *
    *  let routers = {
       interface: { name: '接口', path: "/project/:id/interface/:action", component:Interface },
       activity: { name: '动态', path: "/project/:id/activity", component:  Activity},
@@ -235,12 +235,17 @@ hooks = {
   /*
    * 添加项目设置 nav
    * @param Object routers
-   * 
+   *
    *  let routers = {
       interface: { name: 'xxx', component: Xxx },
     }
    */
   sub_setting_nav:{
+    type: 'listener',
+    mulit: true,
+    listener: []
+  },
+  add_group_tab:{
     type: 'listener',
     mulit: true,
     listener: []

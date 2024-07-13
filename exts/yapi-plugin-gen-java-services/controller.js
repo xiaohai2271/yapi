@@ -26,16 +26,22 @@ class exportController extends baseController {
 
 
   async genCode(ctx) {
-    let projectId = ctx.request.query.projectId;
     let interfaceId = ctx.request.query.interfaceId;
     try {
-      let curProject = await this.projectModel.get(projectId);
       let interfaceData = await this.interModel.get(interfaceId);
+      if (!interfaceData) {
+        ctx.body = yapi.commons.resReturn(null, 502, '接口不存在');
+        return
+      }
+      let curProject = await this.projectModel.get(interfaceData.project_id);
       let userData = await this.userModel.findById(this.getUid());
       let errMsg = [];
 
-      let templateList = await this.genCodeModel.listByProjectId(projectId);
+      let templateList = await this.genCodeModel.listByProjectId(interfaceData.project_id);
       let retData = {};
+      if (templateList == null || templateList.length === 0) {
+        templateList = await this.genCodeModel.listByGroupId(curProject.group_id);
+      }
       console.log(templateList)
       if (templateList == null || templateList.length === 0) {
         ctx.body = yapi.commons.resReturn(errMsg, 502, '请先设置生成模板');
@@ -82,9 +88,10 @@ class exportController extends baseController {
 
   async saveTemplate(ctx) {
     let requestBody = ctx.request.body;
-    let projectId = requestBody.project_id;
-    if (!projectId) {
-      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+    let projectId = requestBody.project_id || requestBody.projectId
+    let groupId = requestBody.group_id || requestBody.groupId
+    if (!projectId && !groupId) {
+      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id/组id'));
     }
 
     if ((await this.checkAuth(projectId, 'project', 'edit')) !== true) {
@@ -96,7 +103,7 @@ class exportController extends baseController {
     } else {
       let existData = await this.genCodeModel.listByProjectId(projectId);
 
-      if (existData.find(templ => templ.tag === requestBody.tag)){
+      if (existData.find(templ => templ.tag === requestBody.tag)) {
         return (ctx.body = yapi.commons.resReturn(null, 502, 'tag已存在'));
       }
       result = await this.genCodeModel.save(requestBody);
@@ -110,12 +117,18 @@ class exportController extends baseController {
    * @param {*} ctx
    */
   async getTemplate(ctx) {
-    let projectId = ctx.params.projectId;
-    if (!projectId) {
-      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+    let projectId = ctx.params.projectId || ctx.params.project_id;
+    let groupId = ctx.params.groupId || ctx.params.group_id;
+    if (!projectId && !groupId) {
+      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id/组id'));
     }
     console.log(this.genCodeModel)
-    let result = await this.genCodeModel.listByProjectId(projectId);
+    let result = null;
+    if (projectId) {
+      result = await this.genCodeModel.listByProjectId(projectId);
+    } else {
+      result = await this.genCodeModel.listByGroupId(groupId);
+    }
     return (ctx.body = yapi.commons.resReturn(result));
   }
 

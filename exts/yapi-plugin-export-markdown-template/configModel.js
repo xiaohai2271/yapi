@@ -10,13 +10,14 @@ class configModel extends baseModel {
   getSchema() {
     return {
       uid: { type: Number},
-      project_id: { type: Number, required: true },
+      project_id: { type: Number, required: false },
+      group_id: { type: Number, required: false },
       //是否开启自动同步
       is_export_by_interface: { type: Boolean, default: false },
       // 模板
       template_data: String,
       add_time: Number,
-      up_time: Number,
+      up_time: Number
     };
   }
 
@@ -26,6 +27,11 @@ class configModel extends baseModel {
     })
   }
 
+  getByGroupId(id) {
+    return this.model.findOne({
+      group_id: id
+    })
+  }
   delByProjectId(project_id){
     return this.model.remove({
       project_id: project_id

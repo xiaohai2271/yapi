@@ -31,5 +31,14 @@ module.exports = function() {
         name: 'Markdown',
         component: Services
       }
-})
+    })
+
+    this.bindHook('add_group_tab', function (panes) {
+      panes.push({
+        key: 'Markdown',
+        title: 'Markdown设置',
+        component: mdTemplate,
+        roles: ['admin', 'owner']
+      })
+    })
 };

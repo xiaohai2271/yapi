@@ -50,6 +50,7 @@ export default class CodeGenTemplate extends Component {
     form: PropTypes.object,
     match: PropTypes.object,
     projectId: PropTypes.number,
+    groupId: PropTypes.number,
     projectMsg: PropTypes.object,
     handleSwaggerUrlData: PropTypes.func
   };
@@ -73,9 +74,10 @@ export default class CodeGenTemplate extends Component {
   }
 
   handleSubmit = async (data) => {
-    const {form, projectId} = this.props;
+    const {form, projectId, groupId} = this.props;
     let params = {
       project_id: projectId,
+      group_id: groupId,
       tag: data.tag_t || data.tag,
       tag_desc: data.tag_desc_t || data.tag_desc,
       template_data: data.template_data,
@@ -99,7 +101,9 @@ export default class CodeGenTemplate extends Component {
     });
 
   };
-
+  componentDidMount() {
+    this.getSyncData();
+  }
 
   UNSAFE_componentWillMount() {
     //查询同步任务
@@ -107,12 +111,11 @@ export default class CodeGenTemplate extends Component {
       config_data: {template_data: "", _id: null},
       templateList: []
     });
-    this.getSyncData();
   }
 
   async getSyncData() {
-    let projectId = this.props.projectMsg._id;
-    let result = await axios.get('/api/plugin/template/get?projectId=' + projectId);
+    const {projectId, groupId} = this.props;
+    let result = await axios.get('/api/plugin/template/get?' + (projectId ? `projectId=${projectId}` : `groupId=${groupId}`));
     if (result.data.errcode === 0) {
       if (result.data.data && result.data.data.length) {
         let defaultTemplate = result.data.data.find(it => it.tag === "default")

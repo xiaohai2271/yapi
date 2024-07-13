@@ -3,6 +3,7 @@ const interfaceModel = require('models/interface.js');
 const projectModel = require('models/project.js');
 const interfaceCatModel = require('models/interfaceCat.js');
 const userModel = require("models/user.js");
+const groupModel = require("models/group.js");
 const yapi = require('yapi.js');
 const uuid = require('uuid');
 const configModel = require("./configModel");
@@ -17,6 +18,7 @@ class exportMarkdownController extends baseController {
     this.projectModel = yapi.getInst(projectModel);
     this.configModel = yapi.getInst(configModel);
     this.userModel = yapi.getInst(userModel);
+    this.groupModel = yapi.getInst(groupModel);
   }
 
   /*
@@ -82,16 +84,19 @@ class exportMarkdownController extends baseController {
     }
 
     let templateData = await this.configModel.getByProjectId(pid);
+    let curProject = await this.projectModel.get(pid);
+    if (!templateData){
+      templateData = await this.configModel.getByGroupId(curProject.group_id);
+    }
     // console.log(result);
-    if (!templateData.is_export_by_interface) {
+    if (!templateData || !templateData.is_export_by_interface) {
       console.log("重定向")
       ctx.status = 302;
       ctx.redirect(`/api/plugin/export?type=markdown&pid=${pid}`);
       return;
     }
-    let curProject;
     try {
-      curProject = await this.projectModel.get(pid);
+
       // ctx.set('Content-Type', 'application/json');
       // ctx.set('Content-Type', 'application/octet-stream');
       const list = await this.handleListClass(pid, status);
@@ -153,8 +158,9 @@ class exportMarkdownController extends baseController {
   async upConfig(ctx) {
     let requestBody = ctx.request.body;
     let projectId = requestBody.project_id;
-    if (!projectId) {
-      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+    let groupId = requestBody.group_id;
+    if (!projectId && !groupId) {
+      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id/组id'));
     }
 
     if ((await this.checkAuth(projectId, 'project', 'edit')) !== true) {
@@ -176,11 +182,17 @@ class exportMarkdownController extends baseController {
    * @param {*} ctx
    */
   async getConfig(ctx) {
-    let projectId = ctx.query.project_id;
-    if (!projectId) {
-      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+    let projectId = ctx.query.project_id || ctx.query.projectId;
+    let groupId = ctx.query.group_id || ctx.query.groupId;
+    if (!projectId && !groupId) {
+      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id/组id'));
     }
-    let result = await this.configModel.getByProjectId(projectId);
+    let  result = null;
+    if (projectId){
+      result = await this.configModel.getByProjectId(projectId);
+    }else {
+      result= await this.configModel.getByGroupId(groupId);
+    }
     return (ctx.body = yapi.commons.resReturn(result));
   }
 
@@ -196,12 +208,15 @@ class exportMarkdownController extends baseController {
     if (!interfaceData) {
       return (ctx.body = yapi.commons.resReturn(null, 200, ''));
     }
+    let project = await this.projectModel.get(interfaceData.project_id);
     let templateData = await this.configModel.getByProjectId(interfaceData.project_id);
+    if (!templateData || !templateData.template_data) {
+      templateData = await this.configModel.getByGroupId(project.group_id);
+    }
     if (!templateData || !templateData.template_data) {
       return (ctx.body = yapi.commons.resReturn(null, 200, ''));
     }
     let interfaceCat = await this.catModel.get(interfaceData.catid);
-    let project = await this.projectModel.get(interfaceData.project_id);
     let {result, errMsg} = await this.executeJsRender(templateData.template_data, project, interfaceData, interfaceCat, userData);
     if (errMsg){
       ctx.body = yapi.commons.resReturn(errMsg, 502, '渲染出错');

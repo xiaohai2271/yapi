@@ -9,7 +9,8 @@ class genCodeModel extends baseModel {
   getSchema() {
     return {
       uid: { type: Number},
-      project_id: { type: Number, required: true },
+      project_id: { type: Number, required: false },
+      group_id: { type: Number, required: false },
       //是否开启自动同步
       tag: { type: String, default: "default" },
       tag_desc: { type: String, default: "默认" },
@@ -30,6 +31,13 @@ class genCodeModel extends baseModel {
   listByProjectId(id) {
     return this.model.find({
       project_id: id
+    })
+  }
+
+
+  listByGroupId(id) {
+    return this.model.find({
+      group_id: id
     })
   }
 

@@ -10,6 +10,15 @@ module.exports = function () {
   })
 
 
+  this.bindHook('add_group_tab', function (panes) {
+    panes.push({
+      key: 'codeGen',
+      title: '代码生成模板配置',
+      component: CodeGenTemplate,
+      roles: ['admin', 'owner']
+    })
+  })
+
   this.bindHook('sub_setting_nav', function (route) {
     route.codeGen = {
       name: '代码生成模板配置',

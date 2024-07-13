@@ -44,6 +44,7 @@ export default class ProjectInterfaceSync extends Component {
   static propTypes = {
     form: PropTypes.object,
     match: PropTypes.object,
+    groupId: PropTypes.number,
     projectId: PropTypes.number,
     projectMsg: PropTypes.object,
     handleSwaggerUrlData: PropTypes.func
@@ -55,11 +56,14 @@ export default class ProjectInterfaceSync extends Component {
       config_data: { is_export_by_interface: false, template_data:"",_id:null }
     };
   }
-
+  componentDidMount() {
+    this.getSyncData();
+  }
   handleSubmit = async () => {
-    const { form, projectId } = this.props;
+    const { form, projectId, groupId } = this.props;
     let params = {
       project_id: projectId,
+      group_id: groupId,
       is_export_by_interface: this.state.config_data.is_export_by_interface,
       template_data: this.state.config_data.template_data,
       uid: this.props.projectMsg.uid
@@ -97,12 +101,10 @@ export default class ProjectInterfaceSync extends Component {
     this.setState({
       config_data: {}
     });
-    this.getSyncData();
   }
 
   async getSyncData() {
-    let projectId = this.props.projectMsg._id;
-    let result = await axios.get('/api/plugin/mdConfig/get?project_id=' + projectId);
+    let result = await axios.get('/api/plugin/mdConfig/get' + (this.props.projectId ? `?project_id=${this.props.projectId}` : `?groupId=${this.props.groupId}`));
     if (result.data.errcode === 0) {
       if (result.data.data) {
         this.setState({

@@ -1,4 +1,4 @@
-import React, { PureComponent as Component } from 'react';
+import React, {PureComponent as Component} from 'react';
 import GroupList from './GroupList/GroupList.js';
 import ProjectList from './ProjectList/ProjectList.js';
 import MemberList from './MemberList/MemberList.js';
@@ -16,6 +16,7 @@ import {
 } from '../../reducer/modules/group';
 import './Group.scss';
 import axios from 'axios'
+import plugin from "../../plugin";
 
 @connect(
   state => {
@@ -67,6 +68,11 @@ export default class Group extends Component {
   //   // }
   // }
   render() {
+    let panes = []
+    plugin.emitHook('add_group_tab', panes);
+
+    let filterPanes = panes.filter(it => it.roles.indexOf(this.props.curUserRoleInGroup) > -1 ||
+      this.props.curUserRole === 'admin');
     if(this.state.groupId === -1)return <Spin />
     const GroupContent = (
       <Layout style={{ minHeight: 'calc(100vh - 100px)', marginLeft: '24px', marginTop: '24px' }}>
@@ -106,6 +112,14 @@ export default class Group extends Component {
                   <GroupSetting />
                 </TabPane>
               ) : null}
+              { filterPanes.map(it =>{
+                let Com = it.component
+                return (
+                  <TabPane tab={it.title} key={it.key}>
+                    <Com groupId={this.props.curGroupId}/>
+                  </TabPane>
+                )
+              }) }
             </Tabs>
           </Content>
         </Layout>
