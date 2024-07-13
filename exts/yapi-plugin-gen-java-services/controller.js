@@ -90,16 +90,15 @@ class exportController extends baseController {
     if ((await this.checkAuth(projectId, 'project', 'edit')) !== true) {
       return (ctx.body = yapi.commons.resReturn(null, 405, '没有权限'));
     }
-    let existData = await this.genCodeModel.listByProjectId(projectId);
-
-    if (existData.find(templ => templ.tag === requestBody.tag)){
-      return (ctx.body = yapi.commons.resReturn(null, 502, 'tag已存在'));
-    }
-
     let result;
     if (requestBody.id) {
       result = await this.genCodeModel.up(requestBody);
     } else {
+      let existData = await this.genCodeModel.listByProjectId(projectId);
+
+      if (existData.find(templ => templ.tag === requestBody.tag)){
+        return (ctx.body = yapi.commons.resReturn(null, 502, 'tag已存在'));
+      }
       result = await this.genCodeModel.save(requestBody);
     }
 
