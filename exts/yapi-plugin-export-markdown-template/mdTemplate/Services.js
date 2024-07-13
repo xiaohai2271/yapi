@@ -8,7 +8,6 @@ import axios from "axios";
 import {message, Card, Button} from "antd";
 import copy from "copy-to-clipboard";
 import MarkdownIt from "markdown-it";
-import "github-markdown-css/github-markdown-light.css"
 
 @connect(
   state => {
