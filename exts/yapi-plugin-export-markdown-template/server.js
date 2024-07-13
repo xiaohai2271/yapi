@@ -17,6 +17,13 @@ module.exports = function(){
             path: 'mdConfig/get',
             action: 'getConfig'
         });
+        // 配置信息
+        addRouter({
+            controller: exportMarkdownController,
+            method: 'get',
+            path: 'mdConfig/gen',
+            action: 'mdGen'
+        });
         addRouter({
             controller: exportMarkdownController,
             method: 'post',

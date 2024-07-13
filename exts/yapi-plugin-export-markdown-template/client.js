@@ -1,4 +1,5 @@
 import mdTemplate from './mdTemplate/mdTemplate.js'
+import Services from "./mdTemplate/Services";
 
 function exportData(exportDataModule, pid) {
     exportDataModule.markdown = {
@@ -17,7 +18,18 @@ function hander(routers) {
   };
 }
 
+
+
+
 module.exports = function() {
     this.bindHook('export_data', exportData);
     this.bindHook('sub_setting_nav', hander);
+
+
+    this.bindHook('interface_tab', function (tabs) {
+      tabs.mdGen = {
+        name: 'Markdown',
+        component: Services
+      }
+})
 };

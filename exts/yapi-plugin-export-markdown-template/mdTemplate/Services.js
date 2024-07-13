@@ -18,7 +18,7 @@ import copy from "copy-to-clipboard";
     getToken
   }
 )
-class Services extends Component {
+class MDTemplateServices extends Component {
   static propTypes = {
     projectId: PropTypes.number,
     token: PropTypes.string,
@@ -38,9 +38,8 @@ class Services extends Component {
   }
 
   async getSyncData() {
-    let projectId = this.props.match.params.id;
     let interfaceId = this.props.match.params.actionId;
-    let result = await axios.get(`/api/plugin/codeGen?projectId=${projectId}&interfaceId=${interfaceId}`);
+    let result = await axios.get(`/api/plugin/mdConfig/gen?interfaceId=${interfaceId}`);
     if (result.data) {
       this.setState({
         render_data: result.data
@@ -54,11 +53,8 @@ class Services extends Component {
   render() {
     let render_vide = [];
     if (this.state.render_data) {
-      Object.keys(this.state.render_data)
-      Object.keys(this.state.render_data).forEach((tag) => {
-        render_vide.push(<h5 key={tag + "_desc"}>{tag}</h5>)
-        render_vide.push(<pre key={tag + "_code"}><span className='btn-pre-copy' onClick={()=>this.preCopy(this.state.render_data[tag])}>复制代码</span>{this.state.render_data[tag] + "\n"}</pre>)
-      });
+      render_vide.push(<pre key="md"><span className='btn-pre-copy' onClick={()=>this.preCopy(this.state.render_data.data)}>复制代码</span>{this.state.render_data.data + "\n"}</pre>)
+
     }
     console.log(render_vide)
     return (
@@ -74,4 +70,4 @@ class Services extends Component {
 }
 
 
-module.exports = withRouter(Services);
+module.exports = withRouter(MDTemplateServices);
