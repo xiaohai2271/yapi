@@ -89,10 +89,13 @@ export default class CodeGenTemplate extends Component {
     form.validateFields(async (err, values) => {
       if (!err) {
         let assignValue = Object.assign(params, values);
-        await axios.post('/api/plugin/template/save', assignValue).then(res => {
+        await axios.post('/api/plugin/template/save', assignValue).then(async (res) => {
           if (res.data.errcode === 0) {
             message.success('保存成功');
-            this.getSyncData();
+            await this.getSyncData();
+            this.setState({
+              activeKey: params.tag
+            });
           } else {
             message.error(res.data.errmsg);
           }
@@ -101,6 +104,7 @@ export default class CodeGenTemplate extends Component {
     });
 
   };
+
   componentDidMount() {
     this.getSyncData();
   }
@@ -113,8 +117,11 @@ export default class CodeGenTemplate extends Component {
     });
   }
 
-  async getSyncData() {
-    const {projectId, groupId} = this.props;
+  async getSyncData(newProps) {
+    const {projectId, groupId} = newProps || this.props;
+    if (newProps && (projectId === this.props.projectId && groupId === this.props.groupId)){
+      return
+    }
     let result = await axios.get('/api/plugin/template/get?' + (projectId ? `projectId=${projectId}` : `groupId=${groupId}`));
     if (result.data.errcode === 0) {
       if (result.data.data && result.data.data.length) {
@@ -180,6 +187,10 @@ export default class CodeGenTemplate extends Component {
     })
   }
 
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    this.getSyncData(nextProps);
+  }
 
   render() {
     const {getFieldDecorator} = this.props.form;

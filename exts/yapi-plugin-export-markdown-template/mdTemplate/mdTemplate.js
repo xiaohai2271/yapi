@@ -59,6 +59,10 @@ export default class ProjectInterfaceSync extends Component {
   componentDidMount() {
     this.getSyncData();
   }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    this.getSyncData(nextProps);
+  }
   handleSubmit = async () => {
     const { form, projectId, groupId } = this.props;
     let params = {
@@ -103,14 +107,16 @@ export default class ProjectInterfaceSync extends Component {
     });
   }
 
-  async getSyncData() {
-    let result = await axios.get('/api/plugin/mdConfig/get' + (this.props.projectId ? `?project_id=${this.props.projectId}` : `?groupId=${this.props.groupId}`));
+  async getSyncData(newProps) {
+    const {projectId, groupId} = newProps || this.props;
+    if (newProps && (projectId === this.props.projectId && groupId === this.props.groupId)){
+      return
+    }
+    let result = await axios.get('/api/plugin/mdConfig/get' + (this.props.projectId ? `?project_id=${projectId}` : `?groupId=${groupId}`));
     if (result.data.errcode === 0) {
-      if (result.data.data) {
-        this.setState({
-          config_data: result.data.data
-        });
-      }
+      this.setState({
+        config_data: (result.data && result.data.data) || {}
+      });
     }
   }
 
