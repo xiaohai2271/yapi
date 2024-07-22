@@ -58,17 +58,18 @@ class MDTemplateServices extends Component {
     let mdContent = [];
     let htmlContent = [];
     if (this.state.render_data && this.state.render_data.data) {
+      const textContent = this.state.render_data.data.error || this.state.render_data.data;
       mdContent = (<pre key="md"><span className='btn-pre-copy'
-                                       onClick={() => this.preCopy(this.state.render_data.data)}>复制Markdown</span>{this.state.render_data.data + "\n"}</pre>)
+                                       onClick={() => this.preCopy(textContent)}>复制Markdown</span>{(textContent) + "\n"}</pre>)
       htmlContent = (
         <div className={"markdown-body"}
-             dangerouslySetInnerHTML={{__html: MarkdownIt().render(this.state.render_data.data || "")}}></div>
+             dangerouslySetInnerHTML={{__html: MarkdownIt().render(textContent || "")}}></div>
       )
     }
     const extraContent = (
       <Fragment>
         <Button size={"small"} type={"link"} icon="copy"
-                onClick={() => this.preCopy(this.state.render_data.data)}>拷贝原文</Button>
+                onClick={() => this.preCopy(this.state.render_data.data.error || this.state.render_data.data)}>拷贝原文</Button>
 
         <Button size={"small"} type={"link"} icon="table"
                 onClick={() => {
